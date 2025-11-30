@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AKC Points Calculator 2025</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root {
+      --bg: #0b0b10;
+      --panel: #171821;
+      --accent: #ffce00;
+      --accent-soft: rgba(255, 206, 0, 0.16);
+      --text: #f5f5f5;
+      --muted: #a3a7c0;
+      --danger: #ff6b6b;
+      --border: #26293a;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top, #202338 0, #05060a 55%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .app {
+      width: 100%;
+      max-width: 740px;
+      padding: 16px;
+    }
+    .card {
+      background: linear-gradient(145deg, #171821, #111217);
+      border-radius: 18px;
+      padding: 18px 18px 20px;
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h1 span.logo {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #fff8c0 0, #ffce00 45%, #a17000 100%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      box-shadow: 0 0 16px rgba(255, 206, 0, 0.6);
+      color: #000;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 12px;
+    }
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 4px;
+    }
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #111219;
+      padding: 9px 10px;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      appearance: none;
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .field-group {
+      margin-bottom: 10px;
+    }
+    .inline-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .inline-options label {
+      margin: 0;
+      font-size: 13px;
+    }
+    .inline-options select {
+      max-width: 160px;
+    }
+    button {
+      margin-top: 12px;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #ffce00, #ffdf5e);
+      color: #1a1300;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow:
+        0 8px 20px rgba(0,0,0,0.65),
+        0 0 18px rgba(255, 206, 0, 0.7);
+      transition: transform 0.06s ease, box-shadow 0.06s ease;
+    }
+    button:active {
+      transform: translateY(1px);
+      box-shadow:
+        0 4px 10px rgba(0,0,0,0.6),
+        0 0 10px rgba(255, 206, 0, 0.5);
+    }
+    .results {
+      margin-top: 14px;
+      padding: 12px 12px 10px;
+      border-radius: 14px;
+      background: rgba(13, 16, 26, 0.85);
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .results-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+    .results-row strong {
+      font-weight: 600;
+    }
+    .points-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      margin-left: 4px;
+    }
+    .label-muted {
+      color: var(--muted);
+    }
+    .error {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--danger);
+    }
+    .note {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .tagline {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <h1>
+        <span class="logo">AKC</span>
+        Points Calculator 2025
+      </h1>
+      <div class="subtitle">
+        Uses the official 2025 AKC schedule across all divisions and breeds.
+      </div>
+
+      <form id="pointsForm" onsubmit="event.preventDefault(); calculatePoints();">
+        <div class="grid">
+          <div class="field-group">
+            <label for="breed">Breed</label>
+            <input id="breed" type="text" placeholder="Bouvier des Flandres" required>
+          </div>
+          <div class="field-group">
+            <label for="state">State (2 letters)</label>
+            <input id="state" type="text" placeholder="NV" maxlength="2" required>
+          </div>
+
+          <div class="field-group">
+            <label for="sex">Dog sex</label>
+            <select id="sex">
+              <option value="Dog">Dog (male)</option>
+              <option value="Bitch">Bitch (female)</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="champion">Is this dog a Champion of Record?</label>
+            <select id="champion">
+              <option value="no">No (class dog)</option>
+              <option value="yes">Yes (special)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field-group">
+            <label for="classDogs">Class dogs (males)</label>
+            <input id="classDogs" type="number" min="0" step="1" value="0">
+          </div>
+          <div class="field-group">
+            <label for="classBitches">Class bitches (females)</label>
+            <input id="classBitches" type="number" min="0" step="1" value="0">
+          </div>
+          <div class="field-group">
+            <label for="maleSpecials">Male specials (champions)</label>
+            <input id="maleSpecials" type="number" min="0" step="1" value="0">
+          </div>
+          <div class="field-group">
+            <label for="femaleSpecials">Female specials (champions)</label>
+            <input id="femaleSpecials" type="number" min="0" step="1" value="0">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="winType">Win type (highest for this dog at that show)</label>
+          <select id="winType">
+            <option value="WD">Winners Dog</option>
+            <option value="WB">Winners Bitch</option>
+            <option value="BOW">Best of Winners</option>
+            <option value="BOB">Best of Breed</option>
+            <option value="BOS">Best of Opposite Sex</option>
+            <option value="SD">Select Dog</option>
+            <option value="SB">Select Bitch</option>
+          </select>
+        </div>
+
+        <button type="submit">Calculate points</button>
+
+        <div id="error" class="error"></div>
+
+        <div id="results" class="results" style="display:none;">
+          <div class="results-row">
+            <span class="label-muted">Championship points</span>
+            <span><strong id="chPoints">0</strong><span class="points-pill">CH</span></span>
+          </div>
+          <div class="results-row">
+            <span class="label-muted">Grand Championship points</span>
+            <span><strong id="gchPoints">0</strong><span class="points-pill">GCH</span></span>
+          </div>
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,0.04);margin:8px 0;">
+          <div class="results-row">
+            <span class="label-muted">Division</span>
+            <span id="divisionOut"></span>
+          </div>
+          <div class="results-row">
+            <span class="label-muted">Entry (class + specials)</span>
+            <span id="entryOut"></span>
+          </div>
+        </div>
+
+        <div class="note">
+          Interprets the win type as the highest award this dog earned that day.  
+          Uses official AKC 2025 point thresholds from your CSV.
+        </div>
+      </form>
+
+      <div class="tagline">
+        Made for ringside sanity.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State → Division mapping from the official AKC 2025 schedule
+    const divisionByState = {
+      // Division 1
+      CT: 1, ME: 1, MA: 1, NH: 1, RI: 1, VT: 1,
+      // Division 2
+      DE: 2, NJ: 2, NY: 2, PA: 2,
+      // Division 3
+      DC: 3, MD: 3, NC: 3, VA: 3, WV: 3,
+      // Division 4
+      FL: 4, GA: 4, SC: 4,
+      // Division 5
+      IN: 5, KY: 5, MI: 5, OH: 5,
+      // Division 6
+      CO: 6, NV: 6, UT: 6,
+      // Division 7
+      KS: 7, OK: 7, TX: 7,
+      // Division 8
+      OR: 8, WA: 8,
+      // Division 9
+      AZ: 9, CA: 9,
+      // Division 10
+      AK: 10,
+      // Division 11
+      HI: 11,
+      // Division 12
+      PR: 12,
+      // Division 13
+      ID: 13, MT: 13, NE: 13, NM: 13, ND: 13, SD: 13, WY: 13,
+      // Division 14
+      AL: 14, AR: 14, LA: 14, MS: 14, TN: 14,
+      // Division 15
+      IL: 15, IA: 15, MN: 15, MO: 15, WI: 15
+    };
+
+    // Points data loaded from CSV
+    let pointsTable = []; // {division, breed, sex, pts:[1..5]}
+
+    async function loadCSV() {
+      try {
+        const res = await fetch('AKC_2025_Points.csv');
+        const text = await res.text();
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+        const header = lines[0].split(',');
+        const rows = lines.slice(1);
+
+        pointsTable = rows.map(line => {
+          const cols = line.split(',');
+          return {
+            division: cols[0],
+            breed: cols[1],
+            sex: cols[2],
+            pts: [
+              Number(cols[3]),
+              Number(cols[4]),
+              Number(cols[5]),
+              Number(cols[6]),
+              Number(cols[7])
+            ]
+          };
+        });
+      } catch (e) {
+        console.error('Failed to load CSV', e);
+      }
+    }
+
+    loadCSV();
+
+    function findBreedRow(division, breedInput, sex) {
+      const divStr = String(division);
+      const needle = breedInput.trim().toLowerCase();
+
+      // First try exact match ignoring case
+      let matches = pointsTable.filter(r =>
+        r.division === divStr &&
+        r.sex === sex &&
+        r.breed.toLowerCase() === needle
+      );
+
+      // If no exact match, try contains
+      if (!matches.length) {
+        matches = pointsTable.filter(r =>
+          r.division === divStr &&
+          r.sex === sex &&
+          r.breed.toLowerCase().includes(needle)
+        );
+      }
+
+      // If still nothing, fall back to "ALL OTHER BREEDS AND VARIETIES"
+      if (!matches.length) {
+        matches = pointsTable.filter(r =>
+          r.division === divStr &&
+          r.sex === sex &&
+          r.breed.toLowerCase() === 'all other breeds and varieties'
+        );
+      }
+
+      return matches[0] || null;
+    }
+
+    function stairPoints(count, pts) {
+      // pts is [p1, p2, p3, p4, p5] = needed counts
+      if (count >= pts[4]) return 5;
+      if (count >= pts[3]) return 4;
+      if (count >= pts[2]) return 3;
+      if (count >= pts[1]) return 2;
+      if (count >= pts[0]) return 1;
+      return 0;
+    }
+
+    function calculatePoints() {
+      const errorEl = document.getElementById('error');
+      const resultsEl = document.getElementById('results');
+      errorEl.textContent = '';
+      resultsEl.style.display = 'none';
+
+      const breed = document.getElementById('breed').value.trim();
+      const state = document.getElementById('state').value.trim().toUpperCase();
+      const sex = document.getElementById('sex').value; // Dog / Bitch
+      const isChampion = document.getElementById('champion').value === 'yes';
+      const winType = document.getElementById('winType').value;
+
+      const classDogs = Number(document.getElementById('classDogs').value || 0);
+      const classBitches = Number(document.getElementById('classBitches').value || 0);
+      const maleSpecials = Number(document.getElementById('maleSpecials').value || 0);
+      const femaleSpecials = Number(document.getElementById('femaleSpecials').value || 0);
+
+      if (!breed) {
+        errorEl.textContent = 'Please enter a breed.';
+        return;
+      }
+      if (!state || state.length !== 2) {
+        errorEl.textContent = 'Please enter a 2 letter state code, for example NV.';
+        return;
+      }
+
+      const division = divisionByState[state];
+      if (!division) {
+        errorEl.textContent = `State ${state} is not mapped to an AKC division in this calculator.`;
+        return;
+      }
+
+      if (!pointsTable.length) {
+        errorEl.textContent = 'Points table data is still loading. Try again in a moment.';
+        return;
+      }
+
+      const totalEntry = classDogs + classBitches + maleSpecials + femaleSpecials;
+
+      // Lookup breed row for this dog's sex
+      const row = findBreedRow(division, breed, sex);
+      if (!row) {
+        errorEl.textContent = `Could not find a point schedule row for "${breed}" in division ${division}.`;
+        return;
+      }
+
+      const pts = row.pts; // [p1..p5]
+
+      // Championship points
+      let chPoints = 0;
+      if (!isChampion) {
+        const mySex = sex; // Dog or Bitch
+        const regularSameSex = mySex === 'Dog' ? classDogs : classBitches;
+        const sameSexSpecials = mySex === 'Dog' ? maleSpecials : femaleSpecials;
+
+        if (winType === 'WD') {
+          // Winners Dog only
+          chPoints = stairPoints(regularSameSex, pts);
+        } else if (winType === 'WB') {
+          chPoints = stairPoints(regularSameSex, pts);
+        } else if (winType === 'BOB') {
+          // WD or WB that goes BOB: same sex regular classes + all specials (both sexes)
+          const count = regularSameSex + maleSpecials + femaleSpecials;
+          chPoints = stairPoints(count, pts);
+        } else if (winType === 'BOS') {
+          // WD or WB that goes BOS: same sex regular classes + same sex specials defeated
+          const count = regularSameSex + sameSexSpecials;
+          chPoints = stairPoints(count, pts);
+        } else if (winType === 'BOW') {
+          // BOW: max of WD and WB side
+          const rowDog = findBreedRow(division, breed, 'Dog');
+          const rowBitch = findBreedRow(division, breed, 'Bitch');
+          if (!rowDog || !rowBitch) {
+            errorEl.textContent = 'Could not load both dog and bitch rows for Best of Winners calculation.';
+            return;
+          }
+          const dogSide = stairPoints(classDogs, rowDog.pts);
+          const bitchSide = stairPoints(classBitches, rowBitch.pts);
+          let maxSide = Math.max(dogSide, bitchSide);
+
+          // Special AKC rule: if both sides zero, but total regular class dogs
+          // is enough for 1 point in this dog's sex, award 1 point.
+          if (maxSide === 0) {
+            const classTotal = classDogs + classBitches;
+            const myRow = sex === 'Dog' ? rowDog : rowBitch;
+            const onePointNeeded = myRow.pts[0]; // p1 requirement
+            if (classTotal >= onePointNeeded) {
+              maxSide = 1;
+            }
+          }
+          chPoints = maxSide;
+        } else {
+          // Select placements for a non champion do not make sense for CH points
+          chPoints = 0;
+        }
+      } else {
+        // Already a champion, no more CH points
+        chPoints = 0;
+      }
+
+      // Grand Champion points
+      let gchPoints = 0;
+      const eligibleForGCH =
+        isChampion &&
+        (winType === 'BOB' || winType === 'BOS' || winType === 'SD' || winType === 'SB');
+
+      if (eligibleForGCH) {
+        // Based on your example: total entry drives GCH points vs the same schedule
+        gchPoints = stairPoints(totalEntry, pts);
+      }
+
+      // Output
+      document.getElementById('chPoints').textContent = chPoints;
+      document.getElementById('gchPoints').textContent = gchPoints;
+      document.getElementById('divisionOut').textContent = division;
+      document.getElementById('entryOut').textContent = totalEntry;
+
+      document.getElementById('results').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
